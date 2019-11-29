@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lamp
+spec:
+  selector:
+    matchLabels:
+      app: lamp
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: lamp
+    spec:
+      schedulerName: {{ .Values.scheduler }}
+{{- if .Values.imageCredentials }}
+      imagePullSecrets:
+        - name: lamp-image-pull-secrets
+{{- end }}
+      containers:
+        - name: lamp
+          image: {{ .Values.lamp.image }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          resources:
+{{- if .Values.lamp.resources }}
+{{ .Values.lamp.resources | toYaml | indent 12 }}
+{{- end }}
+          env:
+            - name: LAMP_DB_HOST
+              value: mysql
+            - name: LAMP_DB_NAME
+              value: lamp
+            - name: LAMP_DB_USERNAME
+              valueFrom:
+                secretKeyRef: { name: mysql-secret, key: user-name }
+            - name: LAMP_DB_PASSWORD
+              valueFrom:
+                secretKeyRef: { name: mysql-secret, key: user-password }
+          volumeMounts:
+            - mountPath: /var/www/html
+              name: lamp-data
+      volumes:
+        - name: lamp-data
+          persistentVolumeClaim: { claimName: lamp-data }

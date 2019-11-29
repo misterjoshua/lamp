@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  replicas: 1
+  serviceName: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      initContainers:
+        - name: mysql-init
+          image: wheatstalk/mysql-password-initcontainer:0.1
+          imagePullPolicy: Always
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef: { name: mysql-secret, key: root-password }
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef: { name: mysql-secret, key: user-name }
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef: { name: mysql-secret, key: user-password }
+            - name: MYSQL_DATABASE
+              value: lamp
+          volumeMounts:
+            - mountPath: /mysql-init
+              name: mysql-init
+      containers:
+      - name: mysql
+        image: {{ .Values.database.image }}
+        args:
+          - mysqld
+          - --init-file=/mysql-init/set-passwords-5.7plus.sql
+{{- if .Values.database.tinyConfiguration }}
+          - --innodb-buffer-pool-size=5M
+          - --innodb-log-buffer-size=256K
+          - --query-cache-size=0
+          - --max-connections=10
+          - --key-buffer-size=8
+          - --thread-cache-size=0
+          - --host-cache-size=0
+          - --innodb-ft-cache-size=1600000
+          - --innodb-ft-total-cache-size=32000000
+          # per thread or per operation settings
+          - --thread-stack=131072
+          - --sort-buffer-size=32K
+          - --read-buffer-size=8200
+          - --read-rnd-buffer-size=8200
+          - --max-heap-table-size=16K
+          - --tmp-table-size=1K
+          - --bulk-insert-buffer-size=0
+          - --join-buffer-size=128
+          - --net-buffer-length=1K
+          - --innodb-sort-buffer-size=64K
+          # settings that relate to the binary log (if enabled)
+          - --binlog-cache-size=4K
+          - --binlog-stmt-cache-size=4K
+{{- end }}
+        resources:
+{{- if .Values.database.resources }}
+{{ .Values.database.resources | toYaml | indent 12 }}
+{{- end }}
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef: { name: mysql-secret, key: root-password }
+        ports:
+          - containerPort: 3306
+        volumeMounts:
+          - mountPath: /mysql-init
+            name: mysql-init
+          - mountPath: /var/lib/mysql
+            name: mysql-data
+      volumes:
+        - name: mysql-init
+          emptyDir: {}
+# End of template
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: {{ default .Values.persistence.storageClass .Values.database.persistence.storageClass }}
+        resources:
+          requests:
+            storage: 5Gi
