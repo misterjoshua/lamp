@@ -1,5 +1,6 @@
 lamp:
   image: php:7.3-apache
+  replicas: 1
 
 database:
   image: mysql:5
@@ -25,4 +26,7 @@ ingress:
     enabled: false
     owasp: false
     whitelist: ""
-    adminWhitelist: ""
+    restrictedUris: []
+    restrictedWhitelist: ""
+  nginx:
+    configurationSnippet: ""

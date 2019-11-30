@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: lamp
-  replicas: 1
+  replicas: {{ .Values.lamp.replicas }}
   template:
     metadata:
       labels:

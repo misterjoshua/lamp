@@ -19,21 +19,22 @@ metadata:
 {{- end }}
 {{- if .Values.ingress.modsecurity.whitelist }}
       SecRule REMOTE_ADDR "!@ipMatch {{ .Values.ingress.modsecurity.whitelist }}" "id:10000,deny"
+{{- end -}}
+{{- if .Values.ingress.modsecurity.restrictedWhitelist }}
+{{- $restrictedWhitelist := .Values.ingress.modsecurity.restrictedWhitelist }}
+{{- range $index, $uri := .Values.ingress.modsecurity.restrictedUris }}
+      SecRule REQUEST_URI "@beginsWith {{ $uri }}" "id:{{ add 10100 $index }},chain,deny"
+        SecRule REMOTE_ADDR "!@ipMatch {{ $restrictedWhitelist }}"
+      {{ "" }}
 {{- end }}
-{{- if .Values.ingress.modsecurity.adminWhitelist }}
-      SecRule REQUEST_URI "@beginsWith /admin" "id:10010,chain,deny"
-      SecRule REMOTE_ADDR "!@ipMatch {{ .Values.ingress.modsecurity.adminWhitelist }}"
 {{- end }}
+{{- if .Values.ingress.modsecurity.snippet }}
+{{ .Values.ingress.modsecurity.snippet | indent 6 }}
 {{- end }}
-{{- if (and .Values.ingress.modsecurity.enabled .Values.ingress.modsecurity.whitelist ) }}
-    lamp-memcached/ingress.modsecurity.whitelist: {{ .Values.ingress.modsecurity.whitelist | quote }}
-{{- end }}
-{{- if (and .Values.ingress.modsecurity.enabled .Values.ingress.modsecurity.adminWhitelist ) }}
-    lamp-memcached/ingress.modsecurity.adminWhitelist: {{ .Values.ingress.modsecurity.adminWhitelist | quote }}
 {{- end }}
 {{- if .Values.ingress.nginx.configurationSnippet }}
     nginx.ingress.kubernetes.io/configuration-snippet: |
-{{ .Values.ingress.nginx.configurationSnippet | indent 6  }}
+{{ .Values.ingress.nginx.configurationSnippet | indent 6 }}
 {{- end }}
 spec:
   rules:
