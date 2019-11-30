@@ -15,7 +15,6 @@ persistence:
   storageClass: ""
 
 ingress:
-  host: ~
   hosts: []
   tls:
     enabled: false
