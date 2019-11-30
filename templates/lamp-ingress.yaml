@@ -31,6 +31,10 @@ metadata:
 {{- if (and .Values.ingress.modsecurity.enabled .Values.ingress.modsecurity.adminWhitelist ) }}
     lamp-memcached/ingress.modsecurity.adminWhitelist: {{ .Values.ingress.modsecurity.adminWhitelist | quote }}
 {{- end }}
+{{- if .Values.ingress.nginx.configurationSnippet }}
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+{{ .Values.ingress.nginx.configurationSnippet | indent 6  }}
+{{- end }}
 spec:
   rules:
 {{- range .Values.ingress.hosts }}
