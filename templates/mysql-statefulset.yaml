@@ -13,6 +13,7 @@ spec:
       labels:
         app: mysql
     spec:
+      serviceAccount: lamp
       initContainers:
         - name: mysql-init
           image: wheatstalk/mysql-password-initcontainer:0.1

@@ -13,6 +13,7 @@ spec:
         app: lamp
     spec:
       schedulerName: {{ .Values.scheduler }}
+      serviceAccount: lamp
 {{- if .Values.imageCredentials }}
       imagePullSecrets:
         - name: lamp-image-pull-secrets
