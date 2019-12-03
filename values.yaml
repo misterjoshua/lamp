@@ -1,6 +1,7 @@
 lamp:
   image: php:7.3-apache
   replicas: 1
+  ingressUrl: ""
 
 database:
   image: mysql:5

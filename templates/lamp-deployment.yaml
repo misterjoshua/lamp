@@ -38,7 +38,10 @@ spec:
             - name: LAMP_DB_PASSWORD
               valueFrom:
                 secretKeyRef: { name: mysql-secret, key: user-password }
-{{- if .Values.ingress.hosts }}
+{{- if .Values.lamp.ingressUrl }}
+            - name: LAMP_INGRESS_URL
+              value: {{ .Values.lamp.ingressUrl }}
+{{- else if .Values.ingress.hosts }}
             - name: LAMP_INGRESS_URL
 {{- if .Values.ingress.tls.enabled }}
               value: https://{{ index .Values.ingress.hosts 0 }}
