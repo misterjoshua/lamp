@@ -4,6 +4,7 @@ lamp:
   ingressUrl: ""
 
 database:
+  enabled: false
   image: mysql:5
   rootPassword: rootpw
   userName: lamp

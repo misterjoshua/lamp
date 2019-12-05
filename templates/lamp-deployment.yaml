@@ -29,6 +29,7 @@ spec:
 {{ .Values.lamp.resources | toYaml | indent 12 }}
 {{- end }}
           env:
+{{ if .Values.database.enabled }}
             - name: LAMP_DB_HOST
               value: mysql
             - name: LAMP_DB_NAME
@@ -39,6 +40,7 @@ spec:
             - name: LAMP_DB_PASSWORD
               valueFrom:
                 secretKeyRef: { name: mysql-secret, key: user-password }
+{{ end }}
 {{- if .Values.lamp.ingressUrl }}
             - name: LAMP_INGRESS_URL
               value: {{ .Values.lamp.ingressUrl }}
