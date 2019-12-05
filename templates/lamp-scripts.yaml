@@ -1,0 +1,7 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: lamp-scripts
+data:
+  lamp-startup-script.sh: |
+{{ include "lamp.lampStartupScript" . | indent 4 }}

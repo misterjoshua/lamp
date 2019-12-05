@@ -22,6 +22,9 @@ spec:
         - name: lamp
           image: {{ .Values.lamp.image }}
           imagePullPolicy: Always
+          command:
+            - bash
+            - /lamp-scripts/lamp-startup-script.sh
           ports:
             - containerPort: 80
           resources:
@@ -55,6 +58,10 @@ spec:
           volumeMounts:
             - mountPath: /var/www/html
               name: lamp-data
+            - mountPath: /lamp-scripts
+              name: lamp-scripts
       volumes:
         - name: lamp-data
           persistentVolumeClaim: { claimName: lamp-data }
+        - name: lamp-scripts
+          configMap: { name: lamp-scripts }

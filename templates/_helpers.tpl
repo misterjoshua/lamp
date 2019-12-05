@@ -54,3 +54,11 @@ Create the name of the service account to use
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+{{- define "lamp.lampStartupScript" -}}
+#!/bin/bash -e
+{{- if .Values.lamp.startupScript }}
+{{ .Values.lamp.startupScript }}
+{{- end }}
+docker-php-entrypoint apache2-foreground
+{{- end -}}
