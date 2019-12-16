@@ -1,0 +1,45 @@
+{{ if .Values.sftp.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sftp
+spec:
+  selector:
+    matchLabels:
+      app: sftp
+  replicas: {{ .Values.sftp.replicas }}
+  template:
+    metadata:
+      labels:
+        app: sftp
+    spec:
+      schedulerName: {{ .Values.scheduler }}
+      serviceAccount: lamp
+{{- if .Values.imageCredentials }}
+      imagePullSecrets:
+        - name: lamp-image-pull-secrets
+{{- end }}
+      containers:
+        - name: lamp
+          image: {{ .Values.sftp.image }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{ .Values.sftp.port }}
+{{- if .Values.sftp.livenessProbe }}
+          livenessProbe:
+{{ .Values.sftp.livenessProbe | toYaml | indent 12 }}
+{{- end }}
+          resources:
+{{- if .Values.sftp.resources }}
+{{ .Values.sftp.resources | toYaml | indent 12 }}
+{{- end }}
+          env:
+            - name: SFTP_USERS
+              value: "{{ .Values.sftp.username }}:{{ required "Please provide sftp.password" .Values.sftp.password }}"
+          volumeMounts:
+            - mountPath: /home/{{ .Values.sftp.username }}/web
+              name: lamp-data
+      volumes:
+        - name: lamp-data
+          persistentVolumeClaim: { claimName: lamp-data }
+{{ end }}

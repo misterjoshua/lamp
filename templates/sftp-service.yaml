@@ -1,0 +1,13 @@
+{{ if .Values.sftp.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: sftp
+spec:
+  type: {{ default "LoadBalancer" .Values.sftp.serviceType }}
+  selector:
+    app: sftp
+  ports:
+    - port: {{ .Values.sftp.servicePort }}
+      targetPort: {{ .Values.sftp.port }}
+{{ end }}

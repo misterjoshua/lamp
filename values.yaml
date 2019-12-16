@@ -11,7 +11,6 @@ database:
   userName: lamp
   userPassword: changeme
   tinyConfiguration: ""
-  memcacheKnownEnabled: false
   persistence:
     storageClass: ""
 
@@ -33,3 +32,13 @@ ingress:
     restrictedWhitelist: ""
   nginx:
     configurationSnippet: ""
+
+sftp:
+  enabled: false
+  serviceType: LoadBalancer
+  servicePort: 1022
+  image: atmoz/sftp:alpine
+  port: 22
+  livenessProbe: ~
+  username: sftp-user
+  password: ~
