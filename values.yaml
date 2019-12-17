@@ -42,3 +42,6 @@ sftp:
   livenessProbe: ~
   username: sftp-user
   password: ~
+  config:
+    enabled: false
+    verbose: false

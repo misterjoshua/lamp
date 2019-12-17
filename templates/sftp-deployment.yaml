@@ -23,6 +23,9 @@ spec:
         - name: lamp
           image: {{ .Values.sftp.image }}
           imagePullPolicy: Always
+          command:
+            - sh
+            - /sftp-configmap/entrypoint.sh
           ports:
             - containerPort: {{ .Values.sftp.port }}
 {{- if .Values.sftp.livenessProbe }}
@@ -37,9 +40,14 @@ spec:
             - name: SFTP_USERS
               value: "{{ .Values.sftp.username }}:{{ required "Please provide sftp.password" .Values.sftp.password }}"
           volumeMounts:
-            - mountPath: /home/{{ .Values.sftp.username }}/web
+            - mountPath: /home/{{ .Values.sftp.username }}
               name: lamp-data
+            - mountPath: /sftp-configmap
+              name: sftp-configmap
       volumes:
         - name: lamp-data
           persistentVolumeClaim: { claimName: lamp-data }
+        - name: sftp-configmap
+          configMap: { name: sftp }
+
 {{ end }}
