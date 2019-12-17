@@ -20,7 +20,7 @@ spec:
         - name: lamp-image-pull-secrets
 {{- end }}
       containers:
-        - name: lamp
+        - name: sftp
           image: {{ .Values.sftp.image }}
           imagePullPolicy: Always
           command:
