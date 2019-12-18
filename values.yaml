@@ -45,3 +45,27 @@ sftp:
   config:
     enabled: false
     verbose: false
+
+webdav:
+  enabled: false
+  serviceType: ClusterIP
+  servicePort: 80
+  username: webdav-user
+  password: ~
+  image: wheatstalk/docker-php-webdav:0.2
+  port: 80
+  ingress:
+    hosts: []
+    tls:
+      enabled: false
+      certManager:
+        clusterIssuer: ""
+        issuer: ""
+    modsecurity:
+      enabled: false
+      owasp: false
+      whitelist: ""
+      restrictedUris: []
+      restrictedWhitelist: ""
+    nginx:
+      configurationSnippet: ""

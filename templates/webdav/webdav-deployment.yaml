@@ -1,0 +1,48 @@
+{{ if .Values.webdav.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webdav
+spec:
+  selector:
+    matchLabels:
+      app: webdav
+  replicas: {{ .Values.webdav.replicas }}
+  template:
+    metadata:
+      labels:
+        app: webdav
+    spec:
+      schedulerName: {{ .Values.scheduler }}
+      serviceAccount: lamp
+{{- if .Values.imageCredentials }}
+      imagePullSecrets:
+        - name: lamp-image-pull-secrets
+{{- end }}
+      containers:
+        - name: webdav
+          image: {{ .Values.webdav.image }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{ .Values.webdav.port }}
+{{- if .Values.webdav.livenessProbe }}
+          livenessProbe:
+{{ .Values.webdav.livenessProbe | toYaml | indent 12 }}
+{{- end }}
+          resources:
+{{- if .Values.webdav.resources }}
+{{ .Values.webdav.resources | toYaml | indent 12 }}
+{{- end }}
+          env:
+            - name: WEBDAV_USERNAME
+              value: "{{ .Values.webdav.username }}"
+            - name: WEBDAV_PASSWORD
+              value: "{{ required "Please provide sftp.password" .Values.webdav.password }}"
+          volumeMounts:
+            - mountPath: /var/webdav/public
+              name: lamp-data
+      volumes:
+        - name: lamp-data
+          persistentVolumeClaim: { claimName: lamp-data }
+
+{{ end }}

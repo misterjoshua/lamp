@@ -1,0 +1,7 @@
+{{ if .Values.webdav.enabled }}
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: webdav
+data:
+{{ end }}

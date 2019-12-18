@@ -1,0 +1,61 @@
+{{- if (or .Values.webdav.ingress.host .Values.webdav.ingress.hosts) }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: webdav
+  annotations:
+{{- if .Values.webdav.ingress.tls.certManager.clusterIssuer }}
+    cert-manager.io/cluster-issuer: {{ .Values.webdav.ingress.tls.certManager.clusterIssuer }}
+{{- end }}
+{{- if .Values.webdav.ingress.tls.certManager.issuer }}
+    cert-manager.io/issuer: {{ .Values.webdav.ingress.tls.certManager.issuer }}
+{{- end }}
+{{- if .Values.webdav.ingress.modsecurity.enabled }}
+    nginx.ingress.kubernetes.io/enable-modsecurity: "true"
+    nginx.ingress.kubernetes.io/modsecurity-snippet: |
+      SecRuleEngine On
+{{- if .Values.webdav.ingress.modsecurity.owasp }}
+      Include /etc/nginx/owasp-modsecurity-crs/nginx-modsecurity.conf
+{{- end }}
+{{- if .Values.webdav.ingress.modsecurity.whitelist }}
+      SecRule REMOTE_ADDR "!@ipMatch {{ .Values.webdav.ingress.modsecurity.whitelist }}" "id:10000,deny"
+{{- end -}}
+{{- if .Values.webdav.ingress.modsecurity.restrictedWhitelist }}
+{{- $restrictedWhitelist := .Values.webdav.ingress.modsecurity.restrictedWhitelist }}
+{{- range $index, $uri := .Values.webdav.ingress.modsecurity.restrictedUris }}
+      SecRule REQUEST_URI "@beginsWith {{ $uri }}" "id:{{ add 10100 $index }},chain,deny"
+        SecRule REMOTE_ADDR "!@ipMatch {{ $restrictedWhitelist }}"
+      {{ "" }}
+{{- end }}
+{{- end }}
+{{- if .Values.webdav.ingress.modsecurity.snippet }}
+{{ .Values.webdav.ingress.modsecurity.snippet | indent 6 }}
+{{- end }}
+{{- end }}
+{{- if .Values.webdav.ingress.nginx.configurationSnippet }}
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+{{ .Values.webdav.ingress.nginx.configurationSnippet | indent 6 }}
+{{- end }}
+spec:
+  rules:
+{{- range .Values.webdav.ingress.hosts }}
+    - host: {{ . }}
+      http:
+        paths:
+        - path: /
+          backend:
+            serviceName: webdav
+            servicePort: 80
+{{- end }}
+{{- if .Values.webdav.ingress.tls.enabled }}
+  tls:
+    - hosts:
+{{- if .Values.webdav.ingress.host }}
+      - {{ .Values.webdav.ingress.host }}
+{{- end }}
+{{- range .Values.webdav.ingress.hosts }}
+      - {{ . }}
+{{- end }}
+      secretName: webdav-cert
+{{- end }}
+{{- end }}
