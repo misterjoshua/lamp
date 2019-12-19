@@ -3,6 +3,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: sftp
+  annotations:
+{{- if .Values.sftp.annotations }}
+{{- .Values.sftp.annotations | toYaml | nindent 4 }}
+{{- end }}
 spec:
   type: {{ default "LoadBalancer" .Values.sftp.serviceType }}
   selector:

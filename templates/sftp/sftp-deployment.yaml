@@ -3,6 +3,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: sftp
+  annotations:
+{{- if .Values.sftp.annotations }}
+{{- .Values.sftp.annotations | toYaml | nindent 4 }}
+{{- end }}
 spec:
   selector:
     matchLabels:
