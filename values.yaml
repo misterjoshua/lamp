@@ -3,6 +3,7 @@ lamp:
   replicas: 1
   ingressUrl: ""
   startupScript: ""
+  annotations: ~
 
 database:
   enabled: false

@@ -2,6 +2,10 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   name: lamp-scripts
+  annotations:
+{{- if .Values.lamp.annotations }}
+{{- .Values.lamp.annotations | toYaml | nindent 4 }}
+{{- end }}
 data:
   lamp-startup-script.sh: |
 {{ include "lamp.lampStartupScript" . | indent 4 }}
