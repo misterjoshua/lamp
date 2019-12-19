@@ -3,6 +3,10 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mysql
+  annotations:
+{{- if .Values.database.annotations }}
+{{- .Values.database.annotations | toYaml | nindent 4 }}
+{{- end }}
 spec:
   selector:
     matchLabels:

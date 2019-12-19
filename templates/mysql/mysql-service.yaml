@@ -3,6 +3,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mysql
+  annotations:
+{{- if .Values.database.annotations }}
+{{- .Values.database.annotations | toYaml | nindent 4 }}
+{{- end }}
 spec:
   selector:
     app: mysql
