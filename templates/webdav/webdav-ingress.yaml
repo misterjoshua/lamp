@@ -4,6 +4,9 @@ kind: Ingress
 metadata:
   name: webdav
   annotations:
+{{- if .Values.webdav.annotations }}
+{{- .Values.webdav.annotations | toYaml | nindent 4 }}
+{{- end }}
 {{- if .Values.webdav.ingress.tls.certManager.clusterIssuer }}
     cert-manager.io/cluster-issuer: {{ .Values.webdav.ingress.tls.certManager.clusterIssuer }}
 {{- end }}

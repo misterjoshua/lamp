@@ -55,6 +55,7 @@ webdav:
   password: ~
   image: wheatstalk/docker-php-webdav:0.2
   port: 80
+  annotations: ~
   ingress:
     hosts: []
     tls:

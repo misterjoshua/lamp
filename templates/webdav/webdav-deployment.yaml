@@ -3,6 +3,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: webdav
+  annotations:
+{{- if .Values.webdav.annotations }}
+{{- .Values.webdav.annotations | toYaml | nindent 4 }}
+{{- end }}
 spec:
   selector:
     matchLabels:
