@@ -7,6 +7,9 @@ metadata:
 {{- if .Values.lamp.annotations }}
 {{- .Values.lamp.annotations | toYaml | nindent 4 }}
 {{- end }}
+{{- if .Values.lamp.ingressAnnotations }}
+{{- .Values.lamp.ingressAnnotations | toYaml | nindent 4 }}
+{{- end }}
 {{- if .Values.ingress.tls.certManager.clusterIssuer }}
     cert-manager.io/cluster-issuer: {{ .Values.ingress.tls.certManager.clusterIssuer }}
 {{- end }}

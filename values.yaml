@@ -4,6 +4,7 @@ lamp:
   ingressUrl: ""
   startupScript: ""
   annotations: ~
+  ingressAnnotations: ~
 
 database:
   enabled: false
