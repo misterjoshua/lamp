@@ -15,6 +15,7 @@ database:
   persistence:
     storageClass: ""
   annotations: ~
+  secretAnnotations: ~
 
 persistence:
   storageClass: ""
