@@ -44,6 +44,11 @@ sftp:
   livenessProbe: ~
   username: sftp-user
   password: ~
+  hostKey:
+    # ssh-keygen -t ed25519 -f ssh_host_ed25519_key < /dev/null
+    #ed25519: ~
+    # ssh-keygen -t rsa -b 4096 -f ssh_host_rsa_key < /dev/null
+    #rsa: ~
   config:
     enabled: false
     verbose: false

@@ -45,4 +45,11 @@ data:
     LogLevel VERBOSE
 {{- end }}
 
+{{- if .Values.hostKey }}
+  ssh_host_ed25519_key: |
+    {{ required "Generate an ed25519 key and put it in hostKey.ed25519 - ssh-keygen -t ed25519 -f ssh_host_ed25519_key < /dev/null" .Values.hostKey.ed25519 | indent 4 }}
+  ssh_host_rsa_key: |
+    {{ required "Generate an RSA key and put it in hostKey.rsa - ssh-keygen -t rsa -b 4096 -f ssh_host_rsa_key < /dev/null" .Values.hostKey.rsa | indent 4 }}
+{{- end }}
+
 {{ end }}

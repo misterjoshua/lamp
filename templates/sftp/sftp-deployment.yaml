@@ -48,10 +48,24 @@ spec:
               name: lamp-data
             - mountPath: /sftp-configmap
               name: sftp-configmap
+{{- if .Values.sftp.hostKey }}
+            - mountPath: /etc/ssh/ssh_host_ed25519_key
+              name: sftp-hostkeys
+              subPath: ssh_host_ed25519_key
+            - mountPath: /etc/ssh/ssh_host_rsa_key
+              name: sftp-hostkeys
+              subPath: ssh_host_rsa_key
+{{- end  }}
       volumes:
         - name: lamp-data
           persistentVolumeClaim: { claimName: lamp-data }
         - name: sftp-configmap
           configMap: { name: sftp }
+{{- if .Values.sftp.hostKey }}
+        - name: sftp-hostkeys
+          secret:
+            secretName: sftp-secret
+            defaultMode: 384
+{{- end }}
 
 {{ end }}
