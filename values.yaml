@@ -1,70 +1,130 @@
+# DOC: ### Web Server Values
+# DOC: | Value | Description |
+# DOC: | ----- | ----------- |
 lamp:
+  # DOC: | lamp.image | The image to run on the web deployment. (Default: `php:7.3-apache`)
   image: php:7.3-apache
+  # DOC: | lamp.replicas | How many replicas in the deployment? (Default: `1`)
   replicas: 1
+  # DOC: | lamp.ingressUrl | Provide the lamp deployment with knowledge about what its public URL is via `LAMP_INGRESS_URL`. This overrides the `ingress.hosts[0]` which is used if this isn't set. (Default: `"ingress.hosts[0]"`)
   ingressUrl: ""
+  # DOC: | lamp.startupScript | A snippet of bash script to run before starting the web server. (Default: `""`)
   startupScript: ""
+  # DOC: | lamp.annotations | Annotations to add to every type of resource created for the lamp component. (Default: ~)
   annotations: ~
+  # DOC: | lamp.ingressAnnotations | Annotations to add to the ingress record specifically.
   ingressAnnotations: ~
 
+# DOC: ### Database Values
+# DOC: | Value | Description |
+# DOC: | ----- | ----------- |
 database:
+  # DOC: | database.enabled | Enables the database StatefulSet. (Default: `false`)
   enabled: false
+  # DOC: | database.image | Use a specific database image in the StatefulSet. (Default: `mysql:5`)
   image: mysql:5
+  # DOC: | database.rootPassword | Choose a specific root password for mysql. (Default: `rootpw`)
   rootPassword: rootpw
+  # DOC: | database.userName | Choose a username for a less privileged mysql user. (Default: `lamp`)
   userName: lamp
+  # DOC: | database.userPassword | Choose a password for the less privileged mysql user. (Default: `changeme`)
   userPassword: changeme
+  # DOC: | database.tinyConfiguration | Enable tiny configuration mode which starts mysql with minimum settings. (Default: `""`)
   tinyConfiguration: ""
   persistence:
+    # DOC: | database.persistence.storageClass | Use a specific storage class for the mysql stateful set's pvc template. (Default: `""`)
     storageClass: ""
+  # DOC: | database.annotations | Set annotations on all database-related resources. (Default: `~`)
   annotations: ~
+  # DOC: | database.secretAnnotations | Set annotations on the mysql-secret resource. (Default: `~`)
   secretAnnotations: ~
 
-persistence:
-  storageClass: ""
-
+# DOC: ### Web Ingress Values
+# DOC: | Value | Description |
+# DOC: | ----- | ----------- |
 ingress:
+  # DOC: | ingress.hosts | A list of host names that the ingress will route to the web server. The first host name listed will be the default host name in case we redirect. If leave hosts as an empty array, the ingress resource will not be created. The default host (`ingress.hosts[0]`) will be provided to the deployment through `LAMP_INGRESS_URL`  with a leading `https://` or `http://` depending on whether TLS is enabled. (Default: `[]`)
   hosts: []
   tls:
+    # DOC: | ingress.tls.enabled | Enables TLS support for the ingress. TLS references a secret called `lamp-cert`. (Default: `false`)
     enabled: false
     certManager:
+      # DOC: | ingress.tls.certManager.clusterIssuer | Adds the cert-manager clusterIssuer annotations so that cert-manager can issue a certificate for this ingress and store it in the `lamp-cert` secret. (Default: `""`)
       clusterIssuer: ""
+      # DOC: | ingress.tls.certManager.issuer | Adds the cert-manager issuer annotations so that cert-manager can issue a certificate for this ingress and store it in the `lamp-cert` secret. (Default: `""`)
       issuer: ""
-  modsecurity:
-    enabled: false
-    owasp: false
-    whitelist: ""
-    restrictedUris: []
-    restrictedWhitelist: ""
   nginx:
+    # DOC: | ingress.nginx.configurationSnippet | Set to a string of arbitrary nginx location configuration. (Default: `""`)
     configurationSnippet: ""
+  modsecurity:
+    # DOC: | ingress.modsecurity.enabled | Enables modsecurity for nginx ingress so that modsecurity can be used as a web application firewall. (Default: `false`)
+    enabled: false
+    # DOC: | ingress.modsecurity.owasp | Enables the OWASP core ruleset for the ingress. (Default: `false`)
+    owasp: false
+    # DOC: | ingress.modsecurity.whitelist | Enables a global whitelist so that only certain IP addresses can access the website. Use modsecurity `@ipMatch` syntax. For example: `1.2.3.4/32,5.6.7.8/32,192.168.0.0/16`. (Default: `""`)
+    whitelist: ""
+    # DOC: | ingress.modsecurity.restrictedUris | Enter a list of restricted urls to apply whitelist restrictions on only a subset of restricted URLs. This is a @beginsWith restriction. For instance: `["/wp-admin", "/wp-login.php"]`. (Default: `[]`)
+    restrictedUris: []
+    # DOC: | ingress.restrictedWhitelist | Set to an `@ipMatch` syntax list of IP addresses allowed to access the `restrictedUris` listed above. (Default: `""`)
+    restrictedWhitelist: ""
 
+
+# DOC: ### SFTP Values
+# DOC: | Value | Description |
+# DOC: | ----- | ----------- |
 sftp:
+  # DOC: | sftp.enabled | Enables sftp support. (Default: `false`)
   enabled: false
+  # DOC: | sftp.serviceType | Set the service type of the sftp service. (Default: `LoadBalancer`)
   serviceType: LoadBalancer
+  # DOC: | sftp.servicePort | Set the port exposed on the load balancer if applicable. (Default: `1022`)
   servicePort: 1022
+  # DOC: | sftp.image | Pick an sftp image. (Default: `atmoz/sftp:alpine`)
   image: atmoz/sftp:alpine
+  # DOC: | sftp.port | Pick the port exposed by `sftp.image` to provide through the load balancer. (Default: `22`)
   port: 22
+  # DOC: | sftp.livenessProbe | Define the livenessProbe for sftp. (Default: `~`)
   livenessProbe: ~
+  # DOC: | sftp.username | Username to log in to sftp. (Default: `sftp-user`)
   username: sftp-user
+  # DOC: | sftp.password | Password to log in with. (Default: `~` - this will give an error, so you must set it.)
   password: ~
   hostKey:
+    # DOC: | sftp.hostKey.ed25519 | The unpassworded ed25519 key to provide a consistent SSH host key. Run `ssh-keygen -t ed25519 -f ssh_host_ed25519_key < /dev/null` and copy the contents of the generated file here. (Default: `~`)
     # ssh-keygen -t ed25519 -f ssh_host_ed25519_key < /dev/null
     #ed25519: ~
     # ssh-keygen -t rsa -b 4096 -f ssh_host_rsa_key < /dev/null
+    # DOC: | sftp.rsa | The unpassworded rsa key to provide a consistent SSH host key. Run `ssh-keygen -t rsa -b 4096 -f ssh_host_rsa_key < /dev/null` and copy the contents of the generated file here. (Default: `~`)
     #rsa: ~
   config:
     enabled: false
     verbose: false
+  # DOC: | sftp.annotations | Provide annotations to all sftp resources.
   annotations: ~
 
+# DOC: ### WebDAV Values Documentation
+# DOC: | Value | Description |
+# DOC: | ----- | ----------- |
 webdav:
+  # DOC: | webdav.enabled | Enables WebDAV support. (Default: `false`)
   enabled: false
+  # DOC: | webdav.serviceType | The service type to use for the webdav service. (Default: `ClusterIP`)
   serviceType: ClusterIP
+  # DOC: | webdav.servicePort | The service port to expose for the webdav service.  (Default: `80`)
   servicePort: 80
-  username: webdav-user
-  password: ~
+  # DOC: | webdav.image | The image which provides webdav service. (Default: `wheatstalk/docker-php-webdav:0.2`)
   image: wheatstalk/docker-php-webdav:0.2
+  # DOC: | webdav.port | The port exposed by the container image which should be plumbed into the service.
   port: 80
+  # DOC: | webdav.username | The username to log into WebDAV. (Default: `webdav-user`)
+  username: webdav-user
+  # DOC: | webdav.password | The password to log into WebDAV. No default. This is a required field.
+  password: ~
+
+  # DOC: | sftp.annotations | Provide annotations to all webdav resources.
   annotations: ~
+
+  # DOC: | webdav.ingress | Please see the documentation for `ingress` to see all available options.
   ingress:
     hosts: []
     tls:
@@ -80,3 +140,10 @@ webdav:
       restrictedWhitelist: ""
     nginx:
       configurationSnippet: ""
+
+# DOC: ### Default Persistence Values Documentation
+# DOC: | Value | Description |
+# DOC: | ----- | ----------- |
+persistence:
+  # DOC: | persistence.storageClass | The default storage class that all PVCs will use.
+  storageClass: ""
