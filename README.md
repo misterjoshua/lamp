@@ -62,7 +62,7 @@
 | webdav.port | The port exposed by the container image which should be plumbed into the service.
 | webdav.username | The username to log into WebDAV. (Default: `webdav-user`)
 | webdav.password | The password to log into WebDAV. No default. This is a required field.
-| sftp.annotations | Provide annotations to all webdav resources.
+| webdav.annotations | Provide annotations to all webdav resources.
 | webdav.ingress | Please see the documentation for `ingress` to see all available options.
 ### Default Persistence Values Documentation
 | Value | Description |

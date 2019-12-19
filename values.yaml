@@ -121,7 +121,7 @@ webdav:
   # DOC: | webdav.password | The password to log into WebDAV. No default. This is a required field.
   password: ~
 
-  # DOC: | sftp.annotations | Provide annotations to all webdav resources.
+  # DOC: | webdav.annotations | Provide annotations to all webdav resources.
   annotations: ~
 
   # DOC: | webdav.ingress | Please see the documentation for `ingress` to see all available options.
