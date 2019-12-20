@@ -1,6 +1,12 @@
 # LAMP Chart
 
+## Usage
+```
+helm upgrade --install lamp https://github.com/misterjoshua/lamp/releases/download/v0.9.1/lamp-0.9.1.tgz -f values.yml
+```
 
+## Examples
+Check out the examples subdirectory.
 
 ## Chart Values Documentation
 
@@ -11,8 +17,8 @@
 | lamp.replicas | How many replicas in the deployment? (Default: `1`)
 | lamp.ingressUrl | Provide the lamp deployment with knowledge about what its public URL is via `LAMP_INGRESS_URL`. This overrides the `ingress.hosts[0]` which is used if this isn't set. (Default: `"ingress.hosts[0]"`)
 | lamp.startupScript | A snippet of bash script to run before starting the web server. (Default: `""`)
-| lamp.annotations | Annotations to add to every type of resource created for the lamp component. (Default: ~)
-| lamp.ingressAnnotations | Annotations to add to the ingress record specifically.
+| lamp.annotations | Annotations to add to every type of resource created for the lamp component. (Default: `~`)
+| lamp.ingressAnnotations | Annotations to add to the ingress record. (Default: `~`)
 ### Database Values
 | Value | Description |
 | ----- | ----------- |
