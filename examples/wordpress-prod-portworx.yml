@@ -1,0 +1,46 @@
+# CHART=https://github.com/misterjoshua/lamp/releases/download/v0.9.1/lamp-0.9.1.tgz
+scheduler: stork
+
+lamp:
+  image: wordpress:5-php7.3
+  replicas: 2
+  startupScript: |
+    a2enmod headers
+    echo "upload_max_filesize=64M" >>/usr/local/etc/php/conf.d/upload.ini
+    echo "post_max_size=128M" >>/usr/local/etc/php/conf.d/upload.ini
+    echo "memory_limit=256M" >>/usr/local/etc/php/conf.d/upload.ini
+    echo "max_execution_time=300" >>/usr/local/etc/php/conf.d/upload.ini
+    echo "max_input_time=300" >>/usr/local/etc/php/conf.d/upload.ini
+  persistence:
+    storageClass: portworx-3repl-shared
+  ingressAnnotations:
+    stork.libopenstorage.org/skipresource: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 64m
+
+database:
+  enabled: true
+  tinyConfiguration: true
+  rootPassword: CHANGEME
+  userName: CHANGEME
+  userPassword: CHANGEME
+  persistence:
+    storageClass: portworx-3repl-db
+  secretAnnotations:
+    stork.libopenstorage.org/skipresource: "true"
+
+ingress:
+  enabled: true
+  hosts:
+    - www.example.com
+    - example.com
+  tls:
+    enabled: true
+    certManager:
+      clusterIssuer: letsencrypt-production
+  modsecurity:
+    enabled: true
+    owasp: false
+    restrictedUris:
+      - /wp-admin
+      - /wp-login.php
+    restrictedWhitelist: "10.0.0.0/8,192.168.0.0/16"

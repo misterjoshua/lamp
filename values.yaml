@@ -10,9 +10,9 @@ lamp:
   ingressUrl: ""
   # DOC: | lamp.startupScript | A snippet of bash script to run before starting the web server. (Default: `""`)
   startupScript: ""
-  # DOC: | lamp.annotations | Annotations to add to every type of resource created for the lamp component. (Default: ~)
+  # DOC: | lamp.annotations | Annotations to add to every type of resource created for the lamp component. (Default: `~`)
   annotations: ~
-  # DOC: | lamp.ingressAnnotations | Annotations to add to the ingress record specifically.
+  # DOC: | lamp.ingressAnnotations | Annotations to add to the ingress record. (Default: `~`)
   ingressAnnotations: ~
 
 # DOC: ### Database Values

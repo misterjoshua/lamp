@@ -1,0 +1,39 @@
+# CHART=https://github.com/misterjoshua/lamp/releases/download/v0.8.0/lamp-0.8.0.tgz
+scheduler: stork
+
+lamp:
+  image: php:7-apache
+  replicas: 1
+  startupScript: |
+    a2enmod headers
+  persistence:
+    storageClass: portworx-3repl-shared
+
+ingress:
+  enabled: true
+  hosts:
+    - dev.example.com
+  tls:
+    enabled: true
+    certManager:
+      clusterIssuer: letsencrypt-production
+  modsecurity:
+    enabled: true
+
+sftp:
+  enabled: true
+  password: CHANGEME
+
+webdav:
+  enabled: true
+  password: CHANGEME
+  ingress:
+    enabled: true
+    hosts:
+      - webdav-dev.example.com
+    tls:
+      enabled: true
+      certManager:
+        clusterIssuer: letsencrypt-production
+    modsecurity:
+      enabled: true

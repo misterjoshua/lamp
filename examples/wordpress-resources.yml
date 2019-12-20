@@ -1,0 +1,8 @@
+lamp:
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 192M
+    requests:
+      cpu: 50m
+      memory: 128M
