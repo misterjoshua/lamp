@@ -43,7 +43,7 @@ Check out the examples subdirectory.
 | ingress.modsecurity.owasp | Enables the OWASP core ruleset for the ingress. (Default: `false`)
 | ingress.modsecurity.whitelist | Enables a global whitelist so that only certain IP addresses can access the website. Use modsecurity `@ipMatch` syntax. For example: `1.2.3.4/32,5.6.7.8/32,192.168.0.0/16`. (Default: `""`)
 | ingress.modsecurity.restrictedUris | Enter a list of restricted urls to apply whitelist restrictions on only a subset of restricted URLs. This is a @beginsWith restriction. For instance: `["/wp-admin", "/wp-login.php"]`. (Default: `[]`)
-| ingress.restrictedWhitelist | Set to an `@ipMatch` syntax list of IP addresses allowed to access the `restrictedUris` listed above. (Default: `""`)
+| ingress.modsecurity.restrictedWhitelist | Set to an `@ipMatch` syntax list of IP addresses allowed to access the `restrictedUris` listed above. (Default: `""`)
 ### SFTP Values
 | Value | Description |
 | ----- | ----------- |
